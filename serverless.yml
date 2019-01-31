@@ -20,30 +20,22 @@ service: intro-to-serverless # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
-
+  environment:
+    BUCKET: "bold-penguin-intro-to-serverless-example"
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  iamRoleStatements:
+   - Effect: "Allow"
+     Action:
+       - "s3:GetObject"
+       - "s3:ListBucket"
+       - "s3:PutBucketNotification"
+     Resource:
+       - "arn:aws:s3:::bold-penguin-intro-to-serverless-example"
+       - "arn:aws:s3:::bold-penguin-intro-to-serverless-example/*"
 
 # you can add packaging information here
 #package:
@@ -55,13 +47,11 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  AnalyzeImage:
+    handler: src/analyze-image.index
     events:
-      - http:
-          path: hello
-          method: get
-#      - s3: ${env:BUCKET}
+     - s3: bold-penguin-intro-to-serverless-example
+       event: s3:ObjectCreated:*
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
 #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
@@ -88,13 +78,9 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+# resources:
+#   Resources:
+#     ImageUploadBucket:
+#       Type: AWS::S3::Bucket
+#       Properties:
+#         BucketName: "bold-penguin-intro-to-serverless-example"
