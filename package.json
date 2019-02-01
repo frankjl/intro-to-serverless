@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.395.0"
+    "aws-sdk": "^2.395.0",
+    "twilio": "^3.27.1"
   },
   "devDependencies": {
     "aws-sdk-mock": "^4.1.0",
